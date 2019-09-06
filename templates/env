@@ -5,6 +5,6 @@ KAPACITOR_HTTP_SHARED_SECRET={{ kapacitor_shared_secret | default(lookup('passwo
 
 KAPACITOR_INFLUXDB_0_URLS_0=https://{{ influxdb_hostname }}:8086
 KAPACITOR_INFLUXDB_0_INSECURE_SKIP_VERIFY={{ influxdb_skip_verify }}
-KAPACITOR_INFLUXDB_0_SUBSCRIPTION_PROTOCOL={% 'https' if influxdb_use_ssl else 'http' %}
+KAPACITOR_INFLUXDB_0_SUBSCRIPTION_PROTOCOL={% if influxdb_use_ssl %}'https'{% else %}http{% endif %}
 KAPACITOR_INFLUXDB_0_USERNAME={{ kapacitor_influxdb_user_name }}
 KAPACITOR_INFLUXDB_0_PASSWORD={{ kapacitor_influxdb_user_password }}
