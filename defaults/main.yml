@@ -11,6 +11,9 @@ kapacitor_systemd_service_name: kapacitor-service.service
 kapacitor_systemd_unit_path: "{{ '/etc/systemd/system/' + kapacitor_systemd_service_name }}"
 kapacitor_config: /etc/kapacitor/kapacitor.conf
 
+influxdb_hostname: localhost
+influxdb_use_ssl: true
+influxdb_skip_verify: true
 kapacitor_influxdb_user_name: fake_user
 kapacitor_influxdb_user_password: fake_pass
 
