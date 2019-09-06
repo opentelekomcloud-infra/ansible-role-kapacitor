@@ -1,0 +1,34 @@
+[Unit]
+Description=Kapacitor Podman container
+Wants=syslog.service
+
+[Service]
+Type=simple
+Restart=always
+TimeoutSec=30s
+User={{ kapacitor_os_user }}
+Group={{ kapacitor_os_group }}
+EnvironmentFile=/etc/kapacitor/env
+
+ExecStartPre=-/usr/bin/podman system migrate
+ExecStartPre=-/usr/bin/podman rm "kapacitor"
+
+ExecStart=/usr/bin/podman run \
+  --name "kapacitor" \
+  -p 9092:9092 \
+  --env-file /etc/kapacitor/env \
+  -v /var/lib/kapacitor:/var/lib/kapacitor:Z \
+{% if kapacitor_enable_ssl %}
+  -v {{ kapacitor_ssl_cert_location }}:/etc/ssl/kapacitor.pem:Z \
+  -v {{ kapacitor_ssl_key_location }}:/etc/ssl/kapacitor.key.pem:Z \
+{% endif %}
+  ${KAPACITOR_IMAGE}
+
+ExecReload=-/usr/bin/podman stop "kapacitor"
+ExecReload=-/usr/bin/podman rm "kapacitor"
+
+ExecStop=-/usr/bin/podman stop "kapacitor"
+ExecStop=-/usr/bin/podman rm "kapacitor"
+
+[Install]
+WantedBy=multi-user.target

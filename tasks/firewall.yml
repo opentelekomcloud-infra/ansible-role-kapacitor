@@ -1,0 +1,18 @@
+---
+# Firewall enablement
+#
+
+- name: Enable firewalld
+  become: true
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: started
+
+- name: Enable Firewall port 9092
+  become: true
+  firewalld:
+    port: 9092/tcp
+    state: enabled
+    permanent: true
+    immediate: true

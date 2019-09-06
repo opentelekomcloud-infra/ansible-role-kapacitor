@@ -1,0 +1,10 @@
+---
+# handlers file for roles/kapacitor
+
+- name: restart kapacitor
+  become: true
+  systemd:
+    name: "{{ kapacitor_systemd_service_name }}"
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

@@ -1,0 +1,46 @@
+---
+# defaults file for roles/kapacitor
+#
+ansible_python_interpreter: "/usr/bin/env python3"
+
+kapacitor_os_user: kapacitor
+kapacitor_os_group: kapacitor
+
+kapacitor_image_tag: 1.5.3
+kapacitor_systemd_service_name: kapacitor-service.service
+kapacitor_systemd_unit_path: "{{ '/etc/systemd/system/' + kapacitor_systemd_service_name }}"
+kapacitor_config: /etc/kapacitor/kapacitor.conf
+
+kapacitor_influxdb_user_name: fake_user
+kapacitor_influxdb_user_password: fake_pass
+
+kapacitor_enable_ssl: false
+kapacitor_ssl_cert_name: kapacitor.pem
+kapacitor_ssl_cert_location: "/etc/ssl/certs/{{ kapacitor_ssl_cert_name }}"
+kapacitor_ssl_cert_content:
+kapacitor_ssl_key_name: kapacitor.key.pem
+kapacitor_ssl_key_location: "/etc/ssl/certs/{{ kapacitor_ssl_key_name }}"
+kapacitor_ssl_key_content:
+kapacitor_ssl_validate_cert: no
+
+# Please pass shared_secret to avoid it's eventual overriding
+# kapacitor_shared_secret: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+kapacitor_shared_secret: abcosdWEFvw32t5
+
+# Infra defaults
+kapacitor_host_state: "present"
+kapacitor_host_image: "Standard_Fedora_29_latest"
+kapacitor_host_flavor: "s2.xlarge.2"
+kapacitor_host_name: "{{ ('grafana.' + domain_name) | default('grafana') }}"
+kapacitor_host_availability_zone: "eu-de-03"
+kapacitor_host_root_volume_size: 12
+kapacitor_host_data_volume_name: "kapacitor_data"
+kapacitor_host_data_volume_size: 50
+kapacitor_host_data_volume_type: "SSD"
+# Auto attach FIP
+kapacitor_host_auto_ip: false
+
+kapacitor_host_metadata:
+  host-type: kapacitor
+kapacitor_host_data_volume_metadata:
+  host-type: kapacitor

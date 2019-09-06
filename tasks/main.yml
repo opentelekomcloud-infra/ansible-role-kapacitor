@@ -1,0 +1,57 @@
+---
+# tasks file for roles/kapacitor
+
+- name: Include Fedora variables
+  include_vars: fedora.yml
+  when: ansible_distribution == "Fedora"
+
+- name: Install required packages
+  become: true
+  package:
+    state: present
+    name: "{{ item }}"
+  with_items: "{{ packages }}"
+  register: task_result
+  until: task_result is success
+  retries: 5
+
+- name: Create Kapacitor OS group
+  become: true
+  group:
+    name: "{{ kapacitor_os_group }}"
+    state: present
+
+- name: Create Kapacitor OS user
+  become: true
+  user:
+    name: "{{ kapacitor_os_user }}"
+    group: "{{ kapacitor_os_group }}"
+
+- name: Create Kapacitor directory
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ kapacitor_os_user }}"
+    group: "{{ kapacitor_os_group }}"
+  loop:
+    - /etc/kapacitor
+    - /var/lib/kapacitor
+
+- name: Write Kapacitor Env file
+  become: true
+  template:
+    src: "env"
+    dest: "/etc/kapacitor/env"
+    owner: "{{ kapacitor_os_user }}"
+    group: "{{ kapacitor_os_group }}"
+
+- name: Write kapacitor systemd unit file
+  become: true
+  template:
+    dest: "{{ kapacitor_systemd_unit_path }}"
+    src: "{{ kapacitor_systemd_service_name }}"
+  notify:
+    - restart kapacitor
+
+- include_tasks: firewall.yml
